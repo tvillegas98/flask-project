@@ -2,3 +2,5 @@ flask
 pymongo
 marshmallow[email]
 python-dotenv
+pyjwt
+pytest
