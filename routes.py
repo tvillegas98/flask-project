@@ -3,6 +3,7 @@ from flask import Blueprint, abort, current_app, jsonify, request
 from marshmallow import ValidationError
 from pymongo.errors import DuplicateKeyError
 
+from auth import jwt_required
 from models import employee_schema, employee_schema_partial
 from services import EmployeeService
 
@@ -21,6 +22,7 @@ def _validate_object_id(id: str) -> None:
 
 
 @employees_bp.post("/employees")
+@jwt_required
 def create_employee():
     try:
         data = employee_schema.load(request.get_json())
@@ -34,6 +36,7 @@ def create_employee():
 
 
 @employees_bp.get("/employees")
+@jwt_required
 def list_employees():
     try:
         skip = int(request.args.get("skip", 0))
@@ -47,6 +50,7 @@ def list_employees():
 
 
 @employees_bp.get("/employees/<id>")
+@jwt_required
 def get_employee(id: str):
     _validate_object_id(id)
 
@@ -58,6 +62,7 @@ def get_employee(id: str):
 
 
 @employees_bp.put("/employees/<id>")
+@jwt_required
 def update_employee(id: str):
     _validate_object_id(id)
 
@@ -76,6 +81,7 @@ def update_employee(id: str):
 
 
 @employees_bp.delete("/employees/<id>")
+@jwt_required
 def delete_employee(id: str):
     _validate_object_id(id)
 
@@ -86,6 +92,7 @@ def delete_employee(id: str):
 
 
 @employees_bp.get("/reports/salary-average")
+@jwt_required
 def salary_average():
     average = _service().average_salary()
     return jsonify({"salary_average": average}), 200

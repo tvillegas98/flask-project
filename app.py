@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from flask import Flask
 from pymongo import MongoClient
 
+from auth import auth_bp
 from repository import EmployeeRepository
 from routes import employees_bp
 from services import EmployeeService
@@ -30,6 +31,11 @@ def create_app() -> Flask:
 
     app = Flask(__name__)
 
+    app.config["JWT_SECRET"] = os.environ["JWT_SECRET"]
+    app.config["JWT_EXP_MINUTES"] = int(os.environ.get("JWT_EXP_MINUTES", "60"))
+    app.config["AUTH_USERNAME"] = os.environ.get("AUTH_USERNAME", "admin")
+    app.config["AUTH_PASSWORD"] = os.environ.get("AUTH_PASSWORD", "admin")
+
     client = MongoClient(mongo_uri)
     collection = client[db_name]["employees"]
 
@@ -40,6 +46,7 @@ def create_app() -> Flask:
     repository = EmployeeRepository(collection)
     app.extensions["employee_service"] = EmployeeService(repository)
 
+    app.register_blueprint(auth_bp)
     app.register_blueprint(employees_bp)
 
     return app
