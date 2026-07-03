@@ -4,6 +4,11 @@ from dotenv import load_dotenv
 from flask import Flask
 from pymongo import MongoClient
 
+from repository import EmployeeRepository
+from routes import employees_bp
+from services import EmployeeService
+
+
 def build_mongo_uri() -> str:
     """
     Arma la URI de conexión a MongoDB desde variables de entorno.
@@ -31,6 +36,11 @@ def create_app() -> Flask:
     collection.create_index("email", unique=True)
 
     app.extensions["mongo_client"] = client
+
+    repository = EmployeeRepository(collection)
+    app.extensions["employee_service"] = EmployeeService(repository)
+
+    app.register_blueprint(employees_bp)
 
     return app
 
