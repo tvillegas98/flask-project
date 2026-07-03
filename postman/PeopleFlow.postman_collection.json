@@ -1,0 +1,177 @@
+{
+  "info": {
+    "name": "PeopleFlow API",
+    "description": "Colección para probar la API REST de empleados de PeopleFlow.\n\nUsa la variable de colección `base_url` (default http://localhost:5000).\nAl crear un empleado (POST) se guarda su `id` en la variable `employee_id`,\nque usan automáticamente los requests de GET/PUT/DELETE por id.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{token}}", "type": "string" }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5001",
+      "type": "string"
+    },
+    {
+      "key": "employee_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "auth": { "type": "noauth" },
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/login",
+          "host": ["{{base_url}}"],
+          "path": ["auth", "login"]
+        },
+        "description": "Emite un JWT con credenciales simples. Guarda el token en la variable `token`, que el resto de los requests envía como Bearer."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "    pm.collectionVariables.set('token', pm.response.json().token);",
+              "    console.log('token guardado');",
+              "}",
+              "pm.test('status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Crear empleado",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Ana\",\n  \"apellido\": \"Pérez\",\n  \"email\": \"ana@peopleflow.com\",\n  \"puesto\": \"Backend\",\n  \"salario\": 1200.5,\n  \"fecha_ingreso\": \"2026-07-03\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/employees",
+          "host": ["{{base_url}}"],
+          "path": ["employees"]
+        },
+        "description": "Crea un empleado. 201 si OK, 400 si el body es inválido, 409 si el email ya existe."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code === 201) {",
+              "    const id = pm.response.json().id;",
+              "    pm.collectionVariables.set('employee_id', id);",
+              "    console.log('employee_id =', id);",
+              "}",
+              "pm.test('status 201', () => pm.response.to.have.status(201));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Listar empleados",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/employees?skip=0&limit=20",
+          "host": ["{{base_url}}"],
+          "path": ["employees"],
+          "query": [
+            { "key": "skip", "value": "0" },
+            { "key": "limit", "value": "20" }
+          ]
+        },
+        "description": "Lista empleados paginados. 200 OK; 400 si skip/limit no son enteros."
+      }
+    },
+    {
+      "name": "Obtener empleado por id",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/employees/{{employee_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["employees", "{{employee_id}}"]
+        },
+        "description": "Obtiene un empleado. 200 OK; 400 si el id no es un ObjectId válido; 404 si no existe."
+      }
+    },
+    {
+      "name": "Actualizar empleado",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"puesto\": \"Tech Lead\",\n  \"salario\": 1800\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/employees/{{employee_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["employees", "{{employee_id}}"]
+        },
+        "description": "Actualización parcial. 200 OK; 400 body/id inválido; 404 si no existe; 409 email duplicado."
+      }
+    },
+    {
+      "name": "Eliminar empleado",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/employees/{{employee_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["employees", "{{employee_id}}"]
+        },
+        "description": "Elimina un empleado. 204 sin contenido; 400 id inválido; 404 si no existe."
+      }
+    },
+    {
+      "name": "Salario promedio",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/reports/salary-average",
+          "host": ["{{base_url}}"],
+          "path": ["reports", "salary-average"]
+        },
+        "description": "Devuelve el salario promedio de la empresa. 200 OK."
+      }
+    }
+  ]
+}
