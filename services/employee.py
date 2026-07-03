@@ -6,7 +6,7 @@ persistencia en ``EmployeeRepository``.
 
 from __future__ import annotations
 
-from repository import EmployeeRepository
+from repositories.employee import EmployeeRepository
 
 
 class EmployeeService:

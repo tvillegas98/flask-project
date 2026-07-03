@@ -4,10 +4,10 @@ from dotenv import load_dotenv
 from flask import Flask
 from pymongo import MongoClient
 
-from auth import auth_bp
-from repository import EmployeeRepository
-from routes import employees_bp
-from services import EmployeeService
+from routes.auth import auth_bp
+from repositories.employee import EmployeeRepository
+from routes.employees import employees_bp
+from services.employee import EmployeeService
 
 
 def build_mongo_uri() -> str:

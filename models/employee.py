@@ -2,7 +2,6 @@ from datetime import date
 
 from marshmallow import Schema, fields, validate
 
-
 def serialize_doc(doc: dict | None) -> dict | None:
     """Convierte un documento de Mongo en un dict serializable.
 

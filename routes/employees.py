@@ -3,9 +3,9 @@ from flask import Blueprint, abort, current_app, jsonify, request
 from marshmallow import ValidationError
 from pymongo.errors import DuplicateKeyError
 
-from auth import jwt_required
-from models import employee_schema, employee_schema_partial
-from services import EmployeeService
+from routes.auth import jwt_required
+from models.employee import employee_schema, employee_schema_partial
+from services.employee import EmployeeService
 
 employees_bp = Blueprint("employees", __name__)
 

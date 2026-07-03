@@ -13,7 +13,7 @@ from bson import ObjectId
 from pymongo import ReturnDocument
 from pymongo.collection import Collection
 
-from models import serialize_doc
+from models.employee import serialize_doc
 
 
 class EmployeeRepository:
