@@ -134,3 +134,8 @@ Notas:
 
 
 En la carpeta [postman/PeopleFlow.postman_collection.json](postman/PeopleFlow.postman_collection.json) se incluyó una collección para poder verificar el funcionamiento de la API.
+
+
+## Que falta
+
+- Agregar tests unitarios
